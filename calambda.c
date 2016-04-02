@@ -172,18 +172,6 @@ void plotcells(char *cells , int leng)
   //printf("s2.2");
 }
 
-/* This function has two distinct modes of operation; thus, there are
-   two ways of calling it.  The first way is with rules equal to a valid
-   rules string (and, therefore, non-NULL).  In this case, the passed 
-   lambda value is ignored and the rules string is analyzed to determine
-   its lambda value.
-
-   In the second mode, with rule equal to NULL, a random string is
-   generated with a lambda value as close to the requested value
-   as possible.
-
-   In either case, both the states, radius, and sq arguments are used. */ 
-
 char *doingrules(int states , int radius , double *lambda , char *rules)
 {
   int area = 2 * radius + 1 ;
@@ -205,7 +193,6 @@ char *doingrules(int states , int radius , double *lambda , char *rules)
    *     table[i][j] = sum(k = 0 .. states - 1) table[i-1][j-k]
    * with any nonsense pair of [i-1][j-k] yielding zero.
    */
-
   /* build ini table . 
      the table means a all-possible-states table .
    */
@@ -252,9 +239,6 @@ char *doingrules(int states , int radius , double *lambda , char *rules)
     printf("bits = %d\n" , bits[i]);
   }
 
-  /* Calculate lambda for these bits.   Note that we are only
-   * distinguishing quiescent from non-quiescent states at this point.
-   */
   /* oldlambda value : 
      filter some vals[] values by using bits[] 0 value (bits[] , 0/1) .
      summary then put to oldlambda . 
@@ -320,7 +304,6 @@ char *doingrules(int states , int radius , double *lambda , char *rules)
 
     printf("newlambda = %f\n" , newlambda);
 
-    /* If this is better, then accept it. */
     /* so , ~lambda is a vals-adjusting .
        so , the diff (between ~lambda and *lambda(I guess it is a standard)) 
        is a distance . To find a min distance , do it again and again .
@@ -393,7 +376,7 @@ int main(int argc , char **argv)
   new = malloc(sizeof(char) * (width + 2 * radius + 2));
   /* width + 2r + 2 , equals to (r+1) + width + (r+1) 
      for expanding a length of (radius+1) each side
-     based on width . amazing ! -- by me
+     based on width . amazing !
   */
 
   /* assign values */
