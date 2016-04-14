@@ -1,7 +1,5 @@
 
-/* 2016.04.14 
-   the famous life game .
-*/
+/* 2016.04.14 , the famous life game . */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -9,14 +7,15 @@
 int width = 10 , height = 5 ;
 int steps = 3 , wrap = 1 ;
 
-void update(int **sum )
+void updatecount(int **sum , int rw , int rh , int ii , int jj , 
+                 int wrap , int change )
 {
 }
 
 int main(int argc , char **argv)
 {
-  int **states , **sum , **newsum;
-  int i , j ;
+  int **states , **sum , **newsum , **swap;
+  int s , i , j  , change ;
 
   printf("hello , life game\n");
 
@@ -34,12 +33,28 @@ int main(int argc , char **argv)
       states[i][j]=sum[i][j]=0;
   }
 
-  for(i = 0 ; i < height ; i++)
+  for(s = 0 ; s < steps ; s++)
   {
-    for(j = 0 ; j < width ; j++)
+    for(i = 0 ; i < height ; i++)
     {
-
+      for(j = 0 ; j < width ; j++)
+      {
+        /* rules */
+        if(states[i][j]==0 && sum[i][j]==3)
+	     {
+          updatecount(newsum,width,height,i,j,wrap,1);
+          states[i][j] = 1 ;
+          change = 1 ;
+	     }
+        else if(states[i][j]==1 && (sum[i][j]<2||sum[i][j]>3))
+	     {
+          updatecount(newsum,width,height,i,j,wrap,-1);
+          states[i][j] = 0 ;
+          change = 1 ;
+	     }
+      }
     }
+    swap = sum ; sum = newsum ; newsum = swap ; 
   }
 
   printf("finish\n");
