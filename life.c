@@ -41,21 +41,21 @@ int main(int argc , char **argv)
       {
         /* rules */
         if(states[i][j]==0 && sum[i][j]==3)
-	     {
+	{
           updatecount(newsum,width,height,i,j,wrap,1);
           states[i][j] = 1 ;
           change = 1 ;
-	     }
+	}
         else if(states[i][j]==1 && (sum[i][j]<2||sum[i][j]>3))
-	     {
+	{
           updatecount(newsum,width,height,i,j,wrap,-1);
           states[i][j] = 0 ;
           change = 1 ;
-	     }
-      }
-    }
+	}
+      } /* for(j = 0 ; j < width ;*/
+    } /* for(i = 0 ; i < height ; */
     swap = sum ; sum = newsum ; newsum = swap ; 
-  }
+  } /* for(s = 0 ; s < steps ; */
 
   printf("finish\n");
   exit(1);
