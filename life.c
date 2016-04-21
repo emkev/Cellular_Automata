@@ -1,5 +1,6 @@
 
 /* 2016.04.14 , the famous life game by John Conway's theories . */
+/* 2016.04.21 , try editing in mobile state */
 
 #include <stdlib.h>
 #include <stdio.h>
