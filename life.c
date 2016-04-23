@@ -14,14 +14,14 @@ void updatecount(int **sum , int rw , int rh , int ii , int jj ,
   int i , j ;
 
   /* one choice - wrap around */
-  if(wrap == 1)
+  if(wrap)
   {
     for(i = -1 ; i <= 1 ; i++)
       for(j = -1 ; j <= 1 ; j++)
         /* not include five central-cross points . */
-        if(i != 0 && j != 0)
+        if(i != 0 || j != 0)
           sum[(i+ii+rh)%rh][(j+jj+rw)%rw] += change ;
-  } /* if(wrap ==1) */
+  } /* if(wrap) */
   /* not wrap around */
   else
   {
