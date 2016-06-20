@@ -18,6 +18,7 @@ int main()
 
     printf("*");
 
+    /*  62 means 2 * pi * 10    */
     for(x = m + 1 ; x < 62 - m ; x++)
       printf(" ");
 
