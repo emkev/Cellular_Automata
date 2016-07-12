@@ -1,49 +1,32 @@
 
 /* 2016.03.16 pm 18:41 , Starbucks in CBD Fortune mall . 
    To play to try Gary's lambda ca.c .
-   The program is from < The Computational Beauty of Nature > (by Gary Flake) .
 */
-
-/* NAME
- *   ca - simulate arbitrary one-dimensional cellular automata
- * NOTES
- *   The main portion of this code is relatively straight forward,
- *   whereas the code to compute lambda (or random rules of a
- *   specified lambda) is a bit tricky and is solved by a method
- *   that resembles dynamic programming.
- *   
- *   Also, the states are stored in a circular buffer such that
- *   the sums for every cell are computed as fast as possible with
- *   the number of additions on the order of two per cell.
- * MISCELLANY
- *   When supplying a lambda value for a random rule, it may not
- *   be possible to find a string with that lambda value because
- *   one may not exist.  In this case, the program will do its
- *   best to find one as close as possible.  In any event, the
- *   algorithm for finding random rules strings for a specified
- *   lambda value is non-deterministic and may not always find
- *   a perfect match even if one exists.  However, it will work
- *   well with high probability, and even when it doesn't find
- *   a perfect match it almost always gets close.
- * BUGS
- *   No sanity checks are performed to make sure that any of the
- *   options make sense.
- * AUTHOR
- *   Copyright (c) 1997, Gary William Flake.
- *   
- *   Permission granted for any use according to the standard GNU
- *   ``copyleft'' agreement provided that the author's comments are
- *   neither modified nor removed.  No warranty is given or implied.
- */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
+#include <string.h>
 
 int height = 60 , width = 60 , states = 2 , radius = 3 ;
 int wrap = 1 ;
 char *rules = "00000110" ;
-double lambda = -1.0 ;
+double lambda = 0.4 ;
+
+int option_length = 3 ;
+
+typedef struct option
+{
+  char *name ;
+  void *ptr ;
+} option ;
+
+option options[] = {
+  { "-height" , &height } ,
+  { "-width"  , &width  } ,
+  { "-lambda" , &lambda }
+} ;
 
 /* show table by cols and rows */
 void showtable(int **table , int area , int len)
@@ -222,6 +205,10 @@ char *doingrules(int states , int radius , double *lambda , char *rules)
   /* turn the final column , then divide by N , 
      then put the results into vals[] .
      Why use the final column ? 
+
+     I guess that the final clolumn is a quiescent-situation value(N-nq) . 
+     Note , lambda involved : (N - nq) / N
+       
    */
   vals = malloc(sizeof(double) * len) ;
   for(i = 0 ; i < len ; i++){
@@ -235,7 +222,7 @@ char *doingrules(int states , int radius , double *lambda , char *rules)
    */
   bits = malloc(sizeof(int) * len);
   for(i = 0 ; i < len ; i++){
-    bits[i] = random() % 2 ;
+    bits[i] = rand() % 2 ;
     printf("bits = %d\n" , bits[i]);
   }
 
@@ -266,21 +253,21 @@ char *doingrules(int states , int radius , double *lambda , char *rules)
     /* setting-key-point A */
     while(1)
     {
-      a = random() % len ;
+      a = rand() % len ;
       printf("a = %d\n" , a);
       /* ? */
       if(a % area == 0) continue ;
-      aval = random() % 2 ;
+      aval = rand() % 2 ;
       break;
     }
 
     /* setting-key-point B */
     while(1)
     {
-      b = random() % len ;
+      b = rand() % len ;
       printf("b = %d\n" , b);
       if(b % area == 0) continue ;
-      bval = random() % 2 ;
+      bval = rand() % 2 ;
       break;
     }
 
@@ -347,8 +334,12 @@ char *doingrules(int states , int radius , double *lambda , char *rules)
    */
   for(i = 0 ; i < len ; i++)
   {
-    rules[i] = bits[i] ? ((random() % (states - 1)) + '1') : '0' ;
+    rules[i] = bits[i] ? ((rand() % (states - 1)) + '1') : '0' ;
   }
+
+  /* lambda-rule summary : 
+     the final column as quiescent-situation turns to ...
+   */
 
   printf("rules==%s\n" , rules);
 
@@ -366,8 +357,35 @@ int main(int argc , char **argv)
   char *old , *new , *swap ;
   int i , a ;
   int sum , odd = 2 ;
+  int ar , found , opf ;
 
   //dorules();
+
+  srand((unsigned)time(NULL));
+
+  ar = 1 ;
+  while(ar < argc)
+  {
+    found = 0 , opf = 0 ;
+    while((!found) && (opf < option_length))
+    {
+      if(strcmp(argv[ar] , options[opf].name) == 0)
+      {
+        *(int *)options[opf].ptr = atoi(argv[ar + 1]) ;
+        found = 1 ;
+        ar += 2 ;
+        break ;
+      }
+
+      opf++ ;
+
+    } /*  while(opf < option_length)  */
+
+    if(!found)
+      ar++ ;
+
+  } /*  while(ar < argc)  */
+
 
   /* The extra 2 * radius + 2 cells are "buffers" that allow us to
    * compute the sums rapidly.
@@ -388,8 +406,8 @@ int main(int argc , char **argv)
   /* Initialize the first state . */
   for(i = (radius + 1) ; i < (width + radius + 1) ; i++)
   {
-    if(random() % odd == 0)
-      old[i] = random() % (states - 1) + 1 ;
+    if(rand() % odd == 0)
+      old[i] = rand() % (states - 1) + 1 ;
   }
   //old[width / 2] = 1 ;
   //cellsshow(old , (width + 2*radius + 2) , 3 , 19);
