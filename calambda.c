@@ -297,7 +297,7 @@ char *doingrules(int states , int radius , char *rules)
     newlambda = oldlambda + (aval - bits[a]) * vals[a] +
       (bval - bits[b]) * vals[b] ;
 
-    printf("newlambda = %f , lambda = %f\n" , newlambda , lambda);
+    printf("newlambda = %f\n" , newlambda);
 
     /* so , ~lambda is a vals-adjusting .
        so , the diff (between ~lambda and *lambda(I guess it is a standard)) 
@@ -308,12 +308,12 @@ char *doingrules(int states , int radius , char *rules)
        more meet *lambda-rules .
 
      */
-    printf("new fabs = %f\n" , fabs(newlambda - lambda));
-    printf("old %f , fabs = %f\n" , oldlambda , fabs(oldlambda - lambda));   
+    //printf("new fabs = %f\n" , fabs(newlambda - lambda));
+    //printf("old %f , fabs = %f\n" , oldlambda , fabs(oldlambda - lambda));   
     if(fabs(newlambda - lambda) < fabs(oldlambda - lambda))
     {
       /*   NOTE , it is upstair count   */
-      printf("upstair count = %d\n" , noimprove);
+      printf("new point\n");
       bits[a] = aval ;
       bits[b] = bval ;
       oldlambda = newlambda ;
@@ -321,14 +321,17 @@ char *doingrules(int states , int radius , char *rules)
     }
     else
     {
-      printf("counting lambda value = %f\n" , oldlambda);
       noimprove++ ;
+      printf("old lambda = %f , counting = %d\n" , oldlambda , noimprove);
     }
     /* We've gone a long time without improving things, so quit. */
     /* try 1000 times to find the min distance . */
     //if(noimprove == 1000) break ;
-    if(noimprove == improvecount) break ;
-
+    if(noimprove == improvecount)
+    {
+      printf("last , old lambda = %f\n" , oldlambda);
+      break ;
+    }
   }
   /* output bits */
   /*
