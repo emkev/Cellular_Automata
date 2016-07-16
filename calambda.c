@@ -13,19 +13,26 @@ int height = 60 , width = 60 , states = 2 , radius = 3 ;
 int wrap = 1 ;
 char *rules = "00000110" ;
 double lambda = 0.4 ;
+int improvecount = 10 ;
 
-int option_length = 3 ;
+int option_length = 4 ;
+
+typedef enum opt_type {
+  opt_int , opt_double
+} opt_type ;
 
 typedef struct option
 {
   char *name ;
+  opt_type type ;
   void *ptr ;
 } option ;
 
 option options[] = {
-  { "-height" , &height } ,
-  { "-width"  , &width  } ,
-  { "-lambda" , &lambda }
+  { "-height" , opt_int , &height } ,
+  { "-width"  , opt_int , &width  } ,
+  { "-lambda" , opt_double , &lambda } ,
+  { "-improvecount" , opt_int , &improvecount }
 } ;
 
 /* show table by cols and rows */
@@ -106,14 +113,14 @@ void dorules()
        so that it will be 0.000 .
      */
     vals[i] = table[area-1][i] / (double)N ;
-    printf("vals[%d] =  %f\n", i , vals[i]);
+    //printf("vals[%d] =  %f\n", i , vals[i]);
   }
 
   bits = malloc(sizeof(int) * len);
   for(i = 0 ; i < len ; i++)
   {
-    bits[i] = random() % 2 ;
-    printf("bits[%d] = %d\n" , i , bits[i]);
+    bits[i] = rand() % 2 ;
+    //printf("bits[%d] = %d\n" , i , bits[i]);
   }
   
   /* clean up table . */
@@ -155,7 +162,7 @@ void plotcells(char *cells , int leng)
   //printf("s2.2");
 }
 
-char *doingrules(int states , int radius , double *lambda , char *rules)
+char *doingrules(int states , int radius , char *rules)
 {
   int area = 2 * radius + 1 ;
   int len = (states - 1) * area + 1 ;
@@ -164,6 +171,7 @@ char *doingrules(int states , int radius , double *lambda , char *rules)
   int a , b , aval , bval , noimprove ;
   int i , j , k , sum ;
   double *vals , oldlambda , newlambda ;
+  int check_count ;
 
   /* Build table that contains the number of transitions to a particular
    * state.  More specifically, table[i][j] will contain the number of
@@ -213,7 +221,7 @@ char *doingrules(int states , int radius , double *lambda , char *rules)
   vals = malloc(sizeof(double) * len) ;
   for(i = 0 ; i < len ; i++){
     vals[i] = (double)( table[area - 1][i] / (double)N ) ;
-    printf("vals = %f\n" , vals[i]);
+    //printf("vals = %f\n" , vals[i]);
   }
 
   /* Make a random vector of bits. */
@@ -223,7 +231,7 @@ char *doingrules(int states , int radius , double *lambda , char *rules)
   bits = malloc(sizeof(int) * len);
   for(i = 0 ; i < len ; i++){
     bits[i] = rand() % 2 ;
-    printf("bits = %d\n" , bits[i]);
+    //printf("bits = %d\n" , bits[i]);
   }
 
   /* oldlambda value : 
@@ -235,7 +243,7 @@ char *doingrules(int states , int radius , double *lambda , char *rules)
     oldlambda += vals[i] * bits[i];
 
   printf("oldlambda = %f\n" , oldlambda);
-  printf("len = %d\n" , len);
+  //printf("len = %d\n" , len);
 
   /* Now, try to improve the lambda count for a bunch of steps. */
   noimprove = 0 ;
@@ -254,7 +262,7 @@ char *doingrules(int states , int radius , double *lambda , char *rules)
     while(1)
     {
       a = rand() % len ;
-      printf("a = %d\n" , a);
+      //printf("a = %d\n" , a);
       /* ? */
       if(a % area == 0) continue ;
       aval = rand() % 2 ;
@@ -265,7 +273,7 @@ char *doingrules(int states , int radius , double *lambda , char *rules)
     while(1)
     {
       b = rand() % len ;
-      printf("b = %d\n" , b);
+      //printf("b = %d\n" , b);
       if(b % area == 0) continue ;
       bval = rand() % 2 ;
       break;
@@ -284,12 +292,12 @@ char *doingrules(int states , int radius , double *lambda , char *rules)
        ???
 
      */
-    printf("s0.01 = %f\n" , (aval - bits[a]) * vals[a]);
-    printf("s0.02 = %f\n" , (bval - bits[b]) * vals[b]);
+    //printf("s0.01 = %f\n" , (aval - bits[a]) * vals[a]);
+    //printf("s0.02 = %f\n" , (bval - bits[b]) * vals[b]);
     newlambda = oldlambda + (aval - bits[a]) * vals[a] +
       (bval - bits[b]) * vals[b] ;
 
-    printf("newlambda = %f\n" , newlambda);
+    printf("newlambda = %f , lambda = %f\n" , newlambda , lambda);
 
     /* so , ~lambda is a vals-adjusting .
        so , the diff (between ~lambda and *lambda(I guess it is a standard)) 
@@ -300,27 +308,35 @@ char *doingrules(int states , int radius , double *lambda , char *rules)
        more meet *lambda-rules .
 
      */
-    if(fabs(newlambda - *lambda) < fabs(oldlambda - *lambda))
+    printf("new fabs = %f\n" , fabs(newlambda - lambda));
+    printf("old %f , fabs = %f\n" , oldlambda , fabs(oldlambda - lambda));   
+    if(fabs(newlambda - lambda) < fabs(oldlambda - lambda))
     {
+      /*   NOTE , it is upstair count   */
+      printf("upstair count = %d\n" , noimprove);
       bits[a] = aval ;
       bits[b] = bval ;
       oldlambda = newlambda ;
       noimprove = 0 ;
     }
     else
+    {
+      printf("counting lambda value = %f\n" , oldlambda);
       noimprove++ ;
-
+    }
     /* We've gone a long time without improving things, so quit. */
     /* try 1000 times to find the min distance . */
     //if(noimprove == 1000) break ;
-    if(noimprove == 10) break ;
+    if(noimprove == improvecount) break ;
 
   }
   /* output bits */
+  /*
   for(i = 0 ; i < len ; i++)
   {
     printf("bits = %d\n" , bits[i]);
   }
+  */
 
   /* Now that we have the bits, we can pick state transitions
    * and return the new rule. 
@@ -371,10 +387,21 @@ int main(int argc , char **argv)
     {
       if(strcmp(argv[ar] , options[opf].name) == 0)
       {
-        *(int *)options[opf].ptr = atoi(argv[ar + 1]) ;
-        found = 1 ;
-        ar += 2 ;
-        break ;
+        switch(options[opf].type)
+	{
+          case opt_int :
+            *(int *)options[opf].ptr = atoi(argv[ar + 1]) ;
+            found = 1 ;
+            ar += 2 ;
+            break ;
+	case opt_double :
+	  *(double *)options[opf].ptr = atof(argv[ar + 1]) ;
+          found = 1 ;
+          ar += 2 ;
+          break ;
+        default :
+          break ;
+	}
       }
 
       opf++ ;
@@ -386,6 +413,7 @@ int main(int argc , char **argv)
 
   } /*  while(ar < argc)  */
 
+  printf("options ! lambda = %f , improvecount = %d\n" , lambda , improvecount);
 
   /* The extra 2 * radius + 2 cells are "buffers" that allow us to
    * compute the sums rapidly.
@@ -414,7 +442,7 @@ int main(int argc , char **argv)
 
   plotcells(old , (width + 2 * radius + 2));
   //printf("s05\n");
-  rules = doingrules(states , radius , &lambda , rules) ;
+  rules = doingrules(states , radius , rules) ;
 
   /* The main loop.  All of the real work is done here. */
   for(a = 0 ; a < height ; a++)
