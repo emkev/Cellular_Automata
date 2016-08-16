@@ -46,15 +46,11 @@ void plot_sin_curve()
     //printf("%d\n" , m);
     
     for(x = 0 ; x < m ; x++)
-    {
       printf(" ");
-    }
     printf("*");
 
     for(x = m + 1 ; x < 31 - m ; x++)
-    {
       printf(" ");
-    }
     printf("*");
 
     printf("\n");
@@ -62,7 +58,7 @@ void plot_sin_curve()
   } /*  for(y = 1 ; y >= 0 ; y -= 0.1)  */
 
   /*  line when y == 0  */
-  for(x = 0 ; x <= 62 ; x++)
+  for(x = 0 ; x <= 62 ; x++) 
   {
     if(x== 0 || x == 31 || x == 32 || x == 62)
       printf("+");
@@ -78,15 +74,11 @@ void plot_sin_curve()
     //printf("%d\n" , m);
     
     for(x = 0 ; x < 31 + abs(m) ; x++)
-    {
       printf(" ");
-    }
     printf("*");
 
     for(x = 32 + abs(m) ; x < 62 - abs(m) ; x++)
-    {
       printf(" ");
-    }
     printf("*");
 
     printf("\n");
@@ -109,24 +101,17 @@ void plot_sin_curve_2(int direct , double spos , double epos , double v)
     m = asin(y) * 10 ;
 
     for(x = 0 ; x < m ; x++)
-    {
       printf(" ");
-    }
     printf("*");
 
     for(x = m + 1 ; x < 31 - m ; x++)
-    {
       printf(" ");
-    }
     printf("*");
 
     /*
-    0 ; 31 + abs(m) | 31 - m ; x++ ;
-    31 - m ; 62 - abs(m) | 62 + m ; x++ ;
+    0 ; 31 - m ; x++ ;
+    31 - m ; 62 + m ; x++ ;
     */
-
-    //for(x = )
-
     printf("\n");
 
   } /*  for(y = 1 ; y >= -1 ; y -= 0.1)  */
