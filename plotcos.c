@@ -91,10 +91,14 @@ void plot_sin_curve_2(int direct , double spos , double epos , double v)
   int m = 0 , x ;
   double y ;
 
-  /*  15 11 9 7 6 ...  6*/
-  for(y = spos ; y > epos ; y -= v)
+  /*  15 11 9 7 6 ...  6  */
+  //y = 1 ;   y > 0 ;  y -= 0.1
+  //y = 0.1 ; y <= 1 ; y += 0.1
+
+  y = spos ;
+  while(1)
   {
-    /*  output spaces of pi-value  */
+    /*output spaces of pi-value*/
     for(x = 0 ; x < direct ; x++)
       printf(" ");
 
@@ -108,27 +112,45 @@ void plot_sin_curve_2(int direct , double spos , double epos , double v)
       printf(" ");
     printf("*");
 
-    /*
-    0 ; 31 - m ; x++ ;
-    31 - m ; 62 + m ; x++ ;
-    */
     printf("\n");
 
-  } /*  for(y = 1 ; y >= -1 ; y -= 0.1)  */
+    y += v ;
+
+    if(direct == 0) 
+    {
+      if(y <= epos) break ;
+    }
+    else 
+    {
+      if(y > epos) break ;
+    }
+
+  }
 
 }
 
 int main()
 {
-  int i , j ;
+  int x , j ;
 
   //plot_cos_curve();
 
+  //plot_sin_curve();
+
   /*  fun to sin , start  */
-  plot_sin_curve_2(0 , 1.0 , 0.0 , 0.1);
-  for(i = 0 ; i <= 62 ; i++)
-    printf("-");
-  plot_sin_curve_2(31 , 0.1 , -1.0 , 0.1);
+  plot_sin_curve_2(0 , 1.0 , 0.0 , -0.1);
+
+  for(x = 0 ; x <= 62 ; x++) 
+  {
+    if(x== 0 || x == 31 || x == 32 || x == 62)
+      printf("+");
+    else
+      printf("-");
+  }
+  printf("\n");
+
+  plot_sin_curve_2(31 , 0.1 , 1.0 , 0.1);
+
   /*  fun to sin , end  */
 
   printf("Finish!\n");
