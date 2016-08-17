@@ -86,7 +86,7 @@ void plot_sin_curve()
   } /*  for(y = 0 ; y >= -1 ; y -= 0.1)  */
 }
 
-void plot_sin_curve_2(int occupy , double spos , double epos , double interval)
+void plot_sin_curve_2(int spaces , double spos , double epos , double interval)
 {
   int m = 0 , x ;
   double y ;
@@ -99,7 +99,7 @@ void plot_sin_curve_2(int occupy , double spos , double epos , double interval)
   while(1)
   {
     /*output spaces of pi-value*/
-    for(x = 0 ; x < occupy ; x++)
+    for(x = 0 ; x < spaces ; x++)
       printf(" ");
 
     m = asin(y) * 10 ;
@@ -116,7 +116,7 @@ void plot_sin_curve_2(int occupy , double spos , double epos , double interval)
 
     y += interval ;
 
-    if(occupy == 0) 
+    if(spaces == 0) 
     {
       if(y <= epos) break ;
     }
